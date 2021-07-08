@@ -11,25 +11,24 @@ final class CalendarData: ObservableObject {
 
     // MARK: - Value
     // MARK: Data
-    @Published var dates = [Date]()
+    @Published var days = [Day]()
+    let columns = Array(repeating: GridItem(.flexible(), spacing: 1), count: 7)
     
-    
-    let columns = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible()),
-                   GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
-    
-    let dateFormatter = ISO8601DateFormatter()
     
     // MARK: - Function
     // MARK: Public
     func request() {
-        guard var date = Calendar.current.date(from: DateComponents(timeZone: TimeZone(abbreviation: "UTC"), year: 2021, month: 7, day: 1)), var firstDate = date.firstDate, let lastDate = date.lastDate else { return }
+        let month: UInt = 7
+        
+        guard let date = Calendar.current.date(from: DateComponents(timeZone: TimeZone(abbreviation: "UTC"), year: 2021, month: Int(month), day: 1)), var firstDate = date.firstDate, let lastDate = date.lastDate else { return }
         let weekDay = firstDate.weekDay
         
         if 1 < weekDay, let previousMonthWeekDay = firstDate.date(days: -Int(weekDay - 1)) {
             firstDate = previousMonthWeekDay
         }
         
-        var dates = [firstDate]
+        
+        var days = [Day(month: month, date: firstDate)]
         while firstDate < lastDate {
             guard let next = firstDate.date(days: 1) else {
                 log(.error, "Failed to get a date. date: \(firstDate),  last:\(lastDate)")
@@ -37,9 +36,18 @@ final class CalendarData: ObservableObject {
             }
             
             firstDate = next
-            dates.append(next)
+            days.append(Day(month: month, date: next))
         }
         
-        DispatchQueue.main.async { self.dates = dates }
+        DispatchQueue.main.async { self.days = days }
+    }
+    
+    func update(data: Day) {
+        guard let index = days.firstIndex(where: { $0 == data }) else {
+            log(.error, "Failed to the clicked day.")
+            return
+        }
+        
+        days[index].isSelected.toggle()
     }
 }

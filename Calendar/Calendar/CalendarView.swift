@@ -51,14 +51,15 @@ struct CalendarView: View {
     
     private var daysView: some View {
         ScrollView {
-            LazyVGrid(columns: data.columns, spacing: 10) {
-                ForEach(data.dates, id: \.self) {
-                    Text("\($0.day)")
-                        .foregroundColor(2...6 ~= $0.weekDay ? nil : ($0.weekDay == 1 ? .red : .blue))
-                        .opacity($0.month != 7 ? 0.48 : 1)
+            LazyVGrid(columns: data.columns, spacing: 1) {
+                ForEach(data.days) { day in
+                    DayCell(data: day) {
+                        data.update(data: day)
+                    }
                 }
             }
         }
+        .background(Color.white)
     }
 }
 
@@ -69,10 +70,6 @@ struct CalendarView_Previews: PreviewProvider {
         let view = CalendarView()
         
         Group {
-            view
-                .preferredColorScheme(.light)
-                .previewDevice("iPhone 8")
-            
             view
                 .preferredColorScheme(.dark)
                 .previewDevice("iPhone 12")

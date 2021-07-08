@@ -15,6 +15,8 @@
 		B7C6482E2696B98D00954D68 /* CalendarData.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7C6482D2696B98D00954D68 /* CalendarData.swift */; };
 		B7C648302696BD7800954D68 /* DateExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7C6482F2696BD7800954D68 /* DateExtension.swift */; };
 		B7C648322696BD9F00954D68 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7C648312696BD9E00954D68 /* Logger.swift */; };
+		B7C648362696E64800954D68 /* DayCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7C648352696E64700954D68 /* DayCell.swift */; };
+		B7C648392696E8C200954D68 /* Day.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7C648382696E8C200954D68 /* Day.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +30,8 @@
 		B7C6482D2696B98D00954D68 /* CalendarData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarData.swift; sourceTree = "<group>"; };
 		B7C6482F2696BD7800954D68 /* DateExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DateExtension.swift; sourceTree = "<group>"; };
 		B7C648312696BD9E00954D68 /* Logger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
+		B7C648352696E64700954D68 /* DayCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayCell.swift; sourceTree = "<group>"; };
+		B7C648382696E8C200954D68 /* Day.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Day.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,6 +88,8 @@
 			children = (
 				B7C6482B2696B98100954D68 /* CalendarView.swift */,
 				B7C6482D2696B98D00954D68 /* CalendarData.swift */,
+				B7C648342696E49800954D68 /* View */,
+				B7C648372696E87A00954D68 /* Model */,
 			);
 			path = Calendar;
 			sourceTree = "<group>";
@@ -95,6 +101,22 @@
 				B7C6482F2696BD7800954D68 /* DateExtension.swift */,
 			);
 			path = Util;
+			sourceTree = "<group>";
+		};
+		B7C648342696E49800954D68 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				B7C648352696E64700954D68 /* DayCell.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		B7C648372696E87A00954D68 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				B7C648382696E8C200954D68 /* Day.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -167,6 +189,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				B7C6481E2696B60700954D68 /* ContentView.swift in Sources */,
+				B7C648362696E64800954D68 /* DayCell.swift in Sources */,
+				B7C648392696E8C200954D68 /* Day.swift in Sources */,
 				B7C648322696BD9F00954D68 /* Logger.swift in Sources */,
 				B7C648302696BD7800954D68 /* DateExtension.swift in Sources */,
 				B7C6482E2696B98D00954D68 /* CalendarData.swift in Sources */,
