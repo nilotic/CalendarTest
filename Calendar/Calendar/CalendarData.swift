@@ -97,14 +97,13 @@ final class CalendarData: ObservableObject {
     }
     
     func update(data: Day) {
-        /*
-        guard let index = days.firstIndex(where: { $0 == data }) else {
-            log(.error, "Failed to the clicked day.")
-            return
+        for (section, month) in months.enumerated() {
+            for (row, day) in month.enumerated() {
+                guard day == data else { continue }
+                months[section][row].isSelected.toggle()
+                return
+            }
         }
-        
-        days[index].isSelected.toggle()
-         */
     }
     
 
