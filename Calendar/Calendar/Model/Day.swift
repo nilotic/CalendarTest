@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct Day {
-    let month: UInt
     let date: Date
+    let validDate: Date
     var isSelected = false
 }
 
@@ -24,14 +24,14 @@ extension Day {
     }
     
     var opacity: Double {
-        date.month != month ? 0.48 : 1
+        date.month != validDate.month ? 0.48 : 1
     }
 }
 
 extension Day: Identifiable {
     
     var id: String {
-        "\(month)\(date)\(isSelected)"
+        "\(validDate)\(date)\(isSelected)"
     }
 }
 
@@ -53,7 +53,7 @@ extension Day: Equatable {
 extension Day {
     
     static var placeholder: Day {
-        Day(month: 7, date: Date(), isSelected: true)
+        Day(date: Date(), validDate: Date(), isSelected: true)
     }
 }
 #endif

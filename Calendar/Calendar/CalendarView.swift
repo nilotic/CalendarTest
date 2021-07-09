@@ -17,9 +17,12 @@ struct CalendarView: View {
     // MARK: - View
     // MARK: Public
     var body: some View {
-        VStack(spacing: 25) {
+        VStack(spacing: 0) {
+            headerView
             weekDaysView
             daysView
+            
+            Spacer()
         }
         .onAppear {
             data.request()
@@ -28,6 +31,15 @@ struct CalendarView: View {
     
     
     // MARK: Private
+    private var headerView: some View {
+        Text(data.section)
+            .font(.system(size: 30, weight: .semibold, design: .rounded))
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(EdgeInsets(top: 15, leading: 15, bottom: 30, trailing: 15))
+            .transition(data.transition)
+            .id(data.section)
+    }
+    
     private var weekDaysView: some View {
         HStack {
             Group {
@@ -45,21 +57,31 @@ struct CalendarView: View {
                 Text("토")
                     .foregroundColor(.blue)
             }
+            .frame(height: 40)
             .frame(maxWidth: .infinity)
         }
     }
     
     private var daysView: some View {
-        ScrollView {
-            LazyVGrid(columns: data.columns, spacing: 1) {
-                ForEach(data.days) { day in
-                    DayCell(data: day) {
-                        data.update(data: day)
+        TabView(selection: $data.page) {
+            ForEach(Array(data.months.enumerated()), id: \.element) { (i, month) in
+                VStack(spacing: 1) {
+                    ForEach(month, id: \.self) { days in
+                        HStack(spacing: 1) {
+                            ForEach(days) { day in
+                                DayCell(data: day) {
+                                    data.update(data: day)
+                                }
+                            }
+                        }
                     }
                 }
+                .tag(i)
             }
+            .background(Color.white)
         }
-        .background(Color.white)
+        .frame(height: 60 * 6 + 1 * 5)
+        .tabViewStyle(PageTabViewStyle())
     }
 }
 

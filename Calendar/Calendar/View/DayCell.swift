@@ -30,7 +30,7 @@ struct DayCell: View {
                     .foregroundColor(Color.gray)
             }
         }
-        .frame(height: 70, alignment: .top)
+        .frame(height: 60, alignment: .top)
         .frame(maxWidth: .infinity)
         .background(Color.black)
         .onTapGesture {

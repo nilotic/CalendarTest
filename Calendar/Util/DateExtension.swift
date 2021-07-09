@@ -21,7 +21,7 @@ enum DateFormat: String {
     case format10 = "yyyy/MM/dd"
     case format11 = "yyyyMMdd'T'HHmm"
     case format12 = "yyyy.MM"
-    case format13 = "yyyyMMMM"
+    case format13 = "yyyy MMMM"
     case time     = "HH:mm"
     case time2    = "HH:mm:ss"
     case weekDay  = "e"
