@@ -11,14 +11,14 @@ final class CalendarData: ObservableObject {
 
     // MARK: - Value
     // MARK: Data
-    @Published var months  = [[[Day]]]()
+    @Published var months = [[Day]]()
     @Published var section = ""
-   
+
     @Published var page = 0 {
         didSet { update() }
     }
     
-    
+
     let columns = Array(repeating: GridItem(.flexible(), spacing: 1), count: 7)
     
     var transition: AnyTransition {
@@ -30,7 +30,7 @@ final class CalendarData: ObservableObject {
         
         return .asymmetric(insertion: insertion, removal: removal)
     }
-    
+
     
     // MARK: Private
     private lazy var dateFormatter: DateFormatter = {
@@ -48,7 +48,7 @@ final class CalendarData: ObservableObject {
         guard let startDate = Calendar.current.date(from: DateComponents(timeZone: TimeZone(abbreviation: "UTC"), year: 2021, month: 1, day: 1)),
               let endDate = Calendar.current.date(from: DateComponents(timeZone: TimeZone(abbreviation: "UTC"), year: 2021, month: 12, day: 31)) else { return }
         
-        var months = [[[Day]]]()
+        var months = [[Day]]()
         var section = ""
         
         for year in startDate.year...endDate.year {
@@ -59,7 +59,7 @@ final class CalendarData: ObservableObject {
                 }
                 
                 section = dateFormatter.string(from: startDate)
-                
+
                 // Previous month
                 let weekDay = firstDate.weekDay
                 if 1 < weekDay, let previousMonth = firstDate.date(days: -Int(weekDay - 1)) {
@@ -75,9 +75,7 @@ final class CalendarData: ObservableObject {
                     lastDate = date
                 }
                 
-                var section = [[Day]]()
-                var rows = [Day(date: firstDate, validDate: date)]
-                
+                var days = [Day(date: firstDate, validDate: date)]
                 while firstDate < lastDate {
                     guard let next = firstDate.date(days: 1) else {
                         log(.error, "Failed to get a date. firstDate: \(firstDate), lastDate:\(lastDate)")
@@ -85,15 +83,10 @@ final class CalendarData: ObservableObject {
                     }
                     
                     firstDate = next
-                    rows.append(Day(date: next, validDate: date))
-                    
-                    if rows.count == 7 {
-                        section.append(rows)
-                        rows.removeAll()
-                    }
+                    days.append(Day(date: next, validDate: date))
                 }
                 
-                months.append(section)
+                months.append(days)
             }
         }
         
@@ -114,10 +107,12 @@ final class CalendarData: ObservableObject {
          */
     }
     
-    
+
     // MARK: Private
     private func update() {
-        guard page < months.count, let date = months[page].first?.first?.validDate else { return }
-        section = dateFormatter.string(from: date)
+        guard page < months.count, let date = months[page].first?.validDate else { return }
+        withAnimation {
+            section = dateFormatter.string(from: date)
+        }
     }
 }

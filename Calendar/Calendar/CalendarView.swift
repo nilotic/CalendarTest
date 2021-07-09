@@ -12,7 +12,7 @@ struct CalendarView: View {
     // MARK: - Value
     // MARK: Private
     @ObservedObject private var data = CalendarData()
-    
+   
     
     // MARK: - View
     // MARK: Public
@@ -65,14 +65,10 @@ struct CalendarView: View {
     private var daysView: some View {
         TabView(selection: $data.page) {
             ForEach(Array(data.months.enumerated()), id: \.element) { (i, month) in
-                VStack(spacing: 1) {
-                    ForEach(month, id: \.self) { days in
-                        HStack(spacing: 1) {
-                            ForEach(days) { day in
-                                DayCell(data: day) {
-                                    data.update(data: day)
-                                }
-                            }
+                LazyVGrid(columns: data.columns, spacing: 1) {
+                    ForEach(month) { day in
+                        DayCell(data: day) {
+                            data.update(data: day)
                         }
                     }
                 }
@@ -80,8 +76,8 @@ struct CalendarView: View {
             }
             .background(Color.white)
         }
+        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
         .frame(height: 60 * 6 + 1 * 5)
-        .tabViewStyle(PageTabViewStyle())
     }
 }
 
