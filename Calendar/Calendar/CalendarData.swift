@@ -154,7 +154,9 @@ final class CalendarData: ObservableObject {
             self.lines = lines
             
         case true:
-            lines =  UInt(min(6, ceil(height / 60))) < 3 ? 6 : 1
+            lines = UInt(min(6, ceil(height / 60))) < 3 ? 6 : 1
+            self.offset.y = lines == 1 ? 60 : -expandedHeight
+            
             request()
         }
         

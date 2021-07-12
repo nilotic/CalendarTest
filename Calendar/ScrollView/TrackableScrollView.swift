@@ -35,8 +35,9 @@ struct TrackableScrollView<Content: View>: UIViewControllerRepresentable {
         viewController.hostingController.rootView = AnyView(content())
         
         guard cache != offset else { return }
-        cache = offset
-        
-        viewController.scrollView.setContentOffset(offset, animated: true)
+        DispatchQueue.main.async {
+            cache = offset
+            viewController.scrollView.setContentOffset(offset, animated: true)
+        }
     }
 }
