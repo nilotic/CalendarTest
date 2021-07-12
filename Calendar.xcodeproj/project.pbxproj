@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		B7216168269BC1C800E2A081 /* FramePreferenceKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7216167269BC1C800E2A081 /* FramePreferenceKey.swift */; };
 		B721616A269BC1D400E2A081 /* ViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7216169269BC1D400E2A081 /* ViewExtension.swift */; };
+		B721616C269C206D00E2A081 /* TrackableScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B721616B269C206D00E2A081 /* TrackableScrollView.swift */; };
+		B721616F269C277300E2A081 /* UIScrollViewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B721616E269C277300E2A081 /* UIScrollViewViewController.swift */; };
 		B7C6481C2696B60700954D68 /* CalendarApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7C6481B2696B60700954D68 /* CalendarApp.swift */; };
 		B7C6481E2696B60700954D68 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7C6481D2696B60700954D68 /* ContentView.swift */; };
 		B7C648202696B60700954D68 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B7C6481F2696B60700954D68 /* Assets.xcassets */; };
@@ -24,6 +26,8 @@
 /* Begin PBXFileReference section */
 		B7216167269BC1C800E2A081 /* FramePreferenceKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FramePreferenceKey.swift; sourceTree = "<group>"; };
 		B7216169269BC1D400E2A081 /* ViewExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewExtension.swift; sourceTree = "<group>"; };
+		B721616B269C206D00E2A081 /* TrackableScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackableScrollView.swift; sourceTree = "<group>"; };
+		B721616E269C277300E2A081 /* UIScrollViewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIScrollViewViewController.swift; sourceTree = "<group>"; };
 		B7C648182696B60700954D68 /* Calendar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Calendar.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7C6481B2696B60700954D68 /* CalendarApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarApp.swift; sourceTree = "<group>"; };
 		B7C6481D2696B60700954D68 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -49,6 +53,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B721616D269C25A900E2A081 /* ScrollView */ = {
+			isa = PBXGroup;
+			children = (
+				B721616B269C206D00E2A081 /* TrackableScrollView.swift */,
+				B721616E269C277300E2A081 /* UIScrollViewViewController.swift */,
+			);
+			path = ScrollView;
+			sourceTree = "<group>";
+		};
 		B7C6480F2696B60700954D68 = {
 			isa = PBXGroup;
 			children = (
@@ -71,6 +84,7 @@
 				B7C6481B2696B60700954D68 /* CalendarApp.swift */,
 				B7C6481D2696B60700954D68 /* ContentView.swift */,
 				B7C6482A2696B81F00954D68 /* Calendar */,
+				B721616D269C25A900E2A081 /* ScrollView */,
 				B7C648332696BDAB00954D68 /* Util */,
 				B7C6481F2696B60700954D68 /* Assets.xcassets */,
 				B7C648242696B60700954D68 /* Info.plist */,
@@ -194,6 +208,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B721616F269C277300E2A081 /* UIScrollViewViewController.swift in Sources */,
 				B7C6481E2696B60700954D68 /* ContentView.swift in Sources */,
 				B7C648362696E64800954D68 /* DayCell.swift in Sources */,
 				B7216168269BC1C800E2A081 /* FramePreferenceKey.swift in Sources */,
@@ -203,6 +218,7 @@
 				B7C648302696BD7800954D68 /* DateExtension.swift in Sources */,
 				B7C6482E2696B98D00954D68 /* CalendarData.swift in Sources */,
 				B7C6481C2696B60700954D68 /* CalendarApp.swift in Sources */,
+				B721616C269C206D00E2A081 /* TrackableScrollView.swift in Sources */,
 				B7C6482C2696B98100954D68 /* CalendarView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

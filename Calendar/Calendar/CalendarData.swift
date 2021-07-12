@@ -11,10 +11,10 @@ final class CalendarData: ObservableObject {
 
     // MARK: - Value
     // MARK: Data
-    @Published var days  = [[Day]]()
+    @Published var weeks = [[Day]]()
     @Published var title = ""
     @Published var calendarHeight: CGFloat = 60 * 6 + 1 * 5
-    @Published var calendarFrame: CGRect = .zero
+    @Published var offset: CGPoint = .zero
     
     @Published var page = 0 {
         didSet { updateSection() }
@@ -39,7 +39,7 @@ final class CalendarData: ObservableObject {
     
     
     // MARK: Private
-    private var lines: UInt = 1
+    private var lines: UInt = 6
     
     private lazy var dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
@@ -56,7 +56,7 @@ final class CalendarData: ObservableObject {
     func request() {
         guard let startDate = startDate, let endDate = endDate else { return }
         
-        var days  = [[Day]]()
+        var weeks  = [[Day]]()
         var title = ""
         let lines = lines
         
@@ -109,7 +109,7 @@ final class CalendarData: ObservableObject {
                 }
                 
                 
-                var section = [Day(date: firstDate, validDate: date)]
+                var week = [Day(date: firstDate, validDate: date)]
                 while firstDate < lastDate {
                     guard let next = firstDate.date(days: 1) else {
                         log(.error, "Failed to get a date. firstDate: \(firstDate), lastDate:\(lastDate)")
@@ -117,45 +117,53 @@ final class CalendarData: ObservableObject {
                     }
                     
                     firstDate = next
-                    section.append(Day(date: next, validDate: date))
+                    week.append(Day(date: next, validDate: date))
                 }
                 
-                days.append(section)
+                weeks.append(week)
             }
         }
         
         DispatchQueue.main.async {
-            self.days = days
-            self.title  = title
+            self.weeks = weeks
+            self.title = title
         }
     }
     
     func handle(data: Day) {
-        for (section, month) in days.enumerated() {
+        for (section, month) in weeks.enumerated() {
             for (row, day) in month.enumerated() {
                 guard day == data else { continue }
-                days[section][row].isSelected.toggle()
+                weeks[section][row].isSelected.toggle()
                 return
             }
         }
     }
     
-    func updateCalendar(frame: CGRect) {
-        let height = max(compactHeight, min(expandedHeight, expandedHeight + frame.origin.y))
+    func updateCalendar(offset: CGPoint, isEnded: Bool) {
+        let height = max(compactHeight, min(expandedHeight, expandedHeight - offset.y))
         
-        guard calendarHeight != height else { return }
-        calendarHeight = height
+        switch isEnded {
+        case false:
+            guard calendarHeight != height else { return }
+            calendarHeight = height
+            
+            let lines = UInt(min(6, ceil(height / 60)))
+            
+            guard self.lines != lines else { return }
+            self.lines = lines
+            
+        case true:
+            lines =  UInt(min(6, ceil(height / 60))) < 3 ? 6 : 1
+            request()
+        }
         
-        let lines = UInt(height) / 60
         log(.info, lines)
-                
-        guard self.lines != lines else { return }
-        
     }
 
     // MARK: Private
     private func updateSection() {
-        guard page < days.count, let date = days[page].first?.validDate else { return }
+        guard page < weeks.count, let date = weeks[page].first?.validDate else { return }
         withAnimation {
             title = dateFormatter.string(from: date)
         }

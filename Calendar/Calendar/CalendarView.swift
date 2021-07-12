@@ -19,14 +19,13 @@ struct CalendarView: View {
     var body: some View {
         ZStack(alignment: .top) {
             transactionHistoryView
-        
+
             VStack(spacing: 0) {
                 headerView
                 weekDaysView
                 daysView
             }
         }
-        
         .onAppear {
             data.request()
         }
@@ -67,7 +66,7 @@ struct CalendarView: View {
     
     private var daysView: some View {
         TabView(selection: $data.page) {
-            ForEach(Array(data.days.enumerated()), id: \.element) { (i, month) in
+            ForEach(Array(data.weeks.enumerated()), id: \.element) { (i, month) in
                 LazyVGrid(columns: data.columns, spacing: 1) {
                     ForEach(month) { day in
                         DayCell(data: day) {
@@ -82,24 +81,12 @@ struct CalendarView: View {
         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
         .frame(height: data.calendarHeight)
         .border(Color.white, width: 1)
-        .frame {
-            data.calendarFrame = $0
-        }
     }
     
     private var transactionHistoryView: some View {
         GeometryReader { proxy in
             VStack {
-                Color.clear
-                    .frame(height: proxy.safeAreaInsets.top + 70)
-                
-                ScrollView(showsIndicators: false) {
-                    GeometryReader {
-                        Color.clear
-                            .preference(key: FramePreferenceKey.self, value: $0.frame(in: .named("scroll")))
-                    }
-                    .frame(height: data.expandedHeight)
-                    
+                TrackableScrollView(inset: UIEdgeInsets(top: data.expandedHeight - 70, left: 0, bottom: 0, right: 0), offset: $data.offset) {
                     LazyVStack {
                         Text("신한 110123130243")
                             .font(.system(size: 13))
@@ -113,12 +100,13 @@ struct CalendarView: View {
                         }
                     }
                     .padding(20)
-                }
-                .coordinateSpace(name: "scroll")
-                .onPreferenceChange(FramePreferenceKey.self) {
-                    data.updateCalendar(frame: $0)
+                    .frame(width: proxy.size.width)
+                    
+                } completion: { offset, isEnded in
+                    data.updateCalendar(offset: offset, isEnded: isEnded)
                 }
             }
+            .padding(.top, proxy.safeAreaInsets.top + 135)
         }
     }
     
