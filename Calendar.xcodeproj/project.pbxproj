@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B7216168269BC1C800E2A081 /* FramePreferenceKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7216167269BC1C800E2A081 /* FramePreferenceKey.swift */; };
+		B721616A269BC1D400E2A081 /* ViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7216169269BC1D400E2A081 /* ViewExtension.swift */; };
 		B7C6481C2696B60700954D68 /* CalendarApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7C6481B2696B60700954D68 /* CalendarApp.swift */; };
 		B7C6481E2696B60700954D68 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7C6481D2696B60700954D68 /* ContentView.swift */; };
 		B7C648202696B60700954D68 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B7C6481F2696B60700954D68 /* Assets.xcassets */; };
@@ -20,6 +22,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B7216167269BC1C800E2A081 /* FramePreferenceKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FramePreferenceKey.swift; sourceTree = "<group>"; };
+		B7216169269BC1D400E2A081 /* ViewExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewExtension.swift; sourceTree = "<group>"; };
 		B7C648182696B60700954D68 /* Calendar.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Calendar.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B7C6481B2696B60700954D68 /* CalendarApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarApp.swift; sourceTree = "<group>"; };
 		B7C6481D2696B60700954D68 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -97,6 +101,8 @@
 		B7C648332696BDAB00954D68 /* Util */ = {
 			isa = PBXGroup;
 			children = (
+				B7216169269BC1D400E2A081 /* ViewExtension.swift */,
+				B7216167269BC1C800E2A081 /* FramePreferenceKey.swift */,
 				B7C648312696BD9E00954D68 /* Logger.swift */,
 				B7C6482F2696BD7800954D68 /* DateExtension.swift */,
 			);
@@ -190,7 +196,9 @@
 			files = (
 				B7C6481E2696B60700954D68 /* ContentView.swift in Sources */,
 				B7C648362696E64800954D68 /* DayCell.swift in Sources */,
+				B7216168269BC1C800E2A081 /* FramePreferenceKey.swift in Sources */,
 				B7C648392696E8C200954D68 /* Day.swift in Sources */,
+				B721616A269BC1D400E2A081 /* ViewExtension.swift in Sources */,
 				B7C648322696BD9F00954D68 /* Logger.swift in Sources */,
 				B7C648302696BD7800954D68 /* DateExtension.swift in Sources */,
 				B7C6482E2696B98D00954D68 /* CalendarData.swift in Sources */,

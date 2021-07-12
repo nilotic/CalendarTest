@@ -17,12 +17,16 @@ struct CalendarView: View {
     // MARK: - View
     // MARK: Public
     var body: some View {
-        VStack(spacing: 0) {
-            headerView
-            weekDaysView
-            daysView
+        ZStack(alignment: .top) {
             transactionHistoryView
+        
+            VStack(spacing: 0) {
+                headerView
+                weekDaysView
+                daysView
+            }
         }
+        
         .onAppear {
             data.request()
         }
@@ -31,12 +35,12 @@ struct CalendarView: View {
     
     // MARK: Private
     private var headerView: some View {
-        Text(data.section)
+        Text(data.title)
             .font(.system(size: 30, weight: .semibold, design: .rounded))
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(EdgeInsets(top: 15, leading: 15, bottom: 30, trailing: 15))
             .transition(data.transition)
-            .id(data.section)
+            .id(data.title)
     }
     
     private var weekDaysView: some View {
@@ -63,11 +67,11 @@ struct CalendarView: View {
     
     private var daysView: some View {
         TabView(selection: $data.page) {
-            ForEach(Array(data.months.enumerated()), id: \.element) { (i, month) in
+            ForEach(Array(data.days.enumerated()), id: \.element) { (i, month) in
                 LazyVGrid(columns: data.columns, spacing: 1) {
                     ForEach(month) { day in
                         DayCell(data: day) {
-                            data.update(data: day)
+                            data.handle(data: day)
                         }
                     }
                 }
@@ -76,26 +80,45 @@ struct CalendarView: View {
             .background(Color.white)
         }
         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-        .frame(height: 60 * 6 + 1 * 5)
+        .frame(height: data.calendarHeight)
         .border(Color.white, width: 1)
+        .frame {
+            data.calendarFrame = $0
+        }
     }
     
     private var transactionHistoryView: some View {
-        ScrollView {
-            LazyVStack {
-                Text("신한 110123130243")
-                    .font(.system(size: 13))
-                    .frame(height: 30)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+        GeometryReader { proxy in
+            VStack {
+                Color.clear
+                    .frame(height: proxy.safeAreaInsets.top + 70)
                 
-                
-                ForEach(0...10, id: \.self) { i in
-                    withdrawCell
-                    depositCell
-                    dateHeader
+                ScrollView(showsIndicators: false) {
+                    GeometryReader {
+                        Color.clear
+                            .preference(key: FramePreferenceKey.self, value: $0.frame(in: .named("scroll")))
+                    }
+                    .frame(height: data.expandedHeight)
+                    
+                    LazyVStack {
+                        Text("신한 110123130243")
+                            .font(.system(size: 13))
+                            .frame(height: 30)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        
+                        ForEach(0...10, id: \.self) { i in
+                            withdrawCell
+                            depositCell
+                            dateHeader
+                        }
+                    }
+                    .padding(20)
+                }
+                .coordinateSpace(name: "scroll")
+                .onPreferenceChange(FramePreferenceKey.self) {
+                    data.updateCalendar(frame: $0)
                 }
             }
-            .padding(20)
         }
     }
     
