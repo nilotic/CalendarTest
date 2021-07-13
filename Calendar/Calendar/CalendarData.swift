@@ -13,9 +13,9 @@ final class CalendarData: ObservableObject {
     // MARK: Data
     @Published var weeks = [[Day]]()
     @Published var title = ""
-    @Published var calendarHeight: CGFloat  = 60 * 6 + 1 * 5
-    @Published var scrollOffset: CGPoint    = .zero
-    @Published var calenderOffsetY: CGFloat = 0
+    @Published var calendarHeight: CGFloat = 60 * 6 + 1 * 5
+    @Published var scrollOffset: CGPoint   = .zero
+    @Published var calenderOffset: CGFloat = 0
     
     @Published var page = 0 {
         didSet { updateSection() }
@@ -40,7 +40,7 @@ final class CalendarData: ObservableObject {
     }
     
     // MARK: Private
-    private var lines: UInt = 6
+    private var lines: UInt = 1
     
     private lazy var dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
@@ -154,7 +154,7 @@ final class CalendarData: ObservableObject {
         let lines = UInt(min(6, ceil(height / compactHeight)))
         
         let ratio = (height - compactHeight) / (expandedHeight - compactHeight)
-        calenderOffsetY = compactHeight / 2 * (1 - ratio)
+        calenderOffset = compactHeight * (1 - ratio)
         
         switch isEnded {
         case false:

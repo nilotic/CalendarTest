@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B70F4779269D314E00240970 /* CalendarPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B70F4778269D314E00240970 /* CalendarPageView.swift */; };
+		B70F477B269D31A000240970 /* CalendarPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B70F477A269D31A000240970 /* CalendarPageViewController.swift */; };
 		B7216168269BC1C800E2A081 /* FramePreferenceKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7216167269BC1C800E2A081 /* FramePreferenceKey.swift */; };
 		B721616A269BC1D400E2A081 /* ViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7216169269BC1D400E2A081 /* ViewExtension.swift */; };
 		B721616C269C206D00E2A081 /* TrackableScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B721616B269C206D00E2A081 /* TrackableScrollView.swift */; };
@@ -24,6 +26,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B70F4778269D314E00240970 /* CalendarPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarPageView.swift; sourceTree = "<group>"; };
+		B70F477A269D31A000240970 /* CalendarPageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarPageViewController.swift; sourceTree = "<group>"; };
 		B7216167269BC1C800E2A081 /* FramePreferenceKey.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FramePreferenceKey.swift; sourceTree = "<group>"; };
 		B7216169269BC1D400E2A081 /* ViewExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ViewExtension.swift; sourceTree = "<group>"; };
 		B721616B269C206D00E2A081 /* TrackableScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackableScrollView.swift; sourceTree = "<group>"; };
@@ -53,6 +57,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B70F4777269D313800240970 /* PageView */ = {
+			isa = PBXGroup;
+			children = (
+				B70F4778269D314E00240970 /* CalendarPageView.swift */,
+				B70F477A269D31A000240970 /* CalendarPageViewController.swift */,
+			);
+			path = PageView;
+			sourceTree = "<group>";
+		};
 		B721616D269C25A900E2A081 /* ScrollView */ = {
 			isa = PBXGroup;
 			children = (
@@ -84,7 +97,6 @@
 				B7C6481B2696B60700954D68 /* CalendarApp.swift */,
 				B7C6481D2696B60700954D68 /* ContentView.swift */,
 				B7C6482A2696B81F00954D68 /* Calendar */,
-				B721616D269C25A900E2A081 /* ScrollView */,
 				B7C648332696BDAB00954D68 /* Util */,
 				B7C6481F2696B60700954D68 /* Assets.xcassets */,
 				B7C648242696B60700954D68 /* Info.plist */,
@@ -126,6 +138,8 @@
 		B7C648342696E49800954D68 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				B721616D269C25A900E2A081 /* ScrollView */,
+				B70F4777269D313800240970 /* PageView */,
 				B7C648352696E64700954D68 /* DayCell.swift */,
 			);
 			path = View;
@@ -212,7 +226,9 @@
 				B7C6481E2696B60700954D68 /* ContentView.swift in Sources */,
 				B7C648362696E64800954D68 /* DayCell.swift in Sources */,
 				B7216168269BC1C800E2A081 /* FramePreferenceKey.swift in Sources */,
+				B70F477B269D31A000240970 /* CalendarPageViewController.swift in Sources */,
 				B7C648392696E8C200954D68 /* Day.swift in Sources */,
+				B70F4779269D314E00240970 /* CalendarPageView.swift in Sources */,
 				B721616A269BC1D400E2A081 /* ViewExtension.swift in Sources */,
 				B7C648322696BD9F00954D68 /* Logger.swift in Sources */,
 				B7C648302696BD7800954D68 /* DateExtension.swift in Sources */,

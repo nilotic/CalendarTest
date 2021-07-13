@@ -65,22 +65,9 @@ struct CalendarView: View {
     }
     
     private var daysView: some View {
-        TabView(selection: $data.page) {
-            ForEach(Array(data.weeks.enumerated()), id: \.element) { (i, month) in
-                LazyVGrid(columns: data.columns, spacing: 1) {
-                    ForEach(month) { day in
-                        DayCell(data: day) {
-                            data.handle(data: day)
-                        }
-                    }
-                }
-                .tag(i)
-                .drawingGroup()
-            }
-            .background(Color.white)
-            .offset(y: data.calenderOffsetY)
+        CalendarPageView(data: data.weeks, page: $data.page, offset: data.calenderOffset) { day in
+            data.handle(data: day)
         }
-        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
         .frame(height: data.calendarHeight)
         .border(Color.white, width: 1)
     }
