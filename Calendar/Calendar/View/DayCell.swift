@@ -11,8 +11,21 @@ struct DayCell: View {
     
     // MARK: - Value
     // MARK: Public
-    let data: Day
-    var completion: (() -> Void)? = nil
+    private let data: Day
+    private let completion: ((_ day: Day) -> Void)?
+    
+    // MARK: Private
+    @State var isSelected = false
+    
+    
+    // MARK: - Initializer
+    init(data: Day, completion: ((_ day: Day) -> Void)? = nil) {
+        self.data = data
+        self.completion = completion
+        
+        isSelected = data.isSelected
+    }
+    
     
     // MARK: - View
     // MARK: Public
@@ -20,11 +33,11 @@ struct DayCell: View {
         VStack {
             Text("\(data.date.day)")
                 .foregroundColor(data.color)
-                .background(data.isSelected ? overlay : nil)
+                .background(isSelected ? overlay : nil)
                 .opacity(data.opacity)
                 .padding(.top, 12)
         
-            if data.isSelected {
+            if isSelected {
                 Circle()
                     .frame(width: 7, height: 7)
                     .foregroundColor(Color.gray)
@@ -34,11 +47,15 @@ struct DayCell: View {
         .frame(maxWidth: .infinity)
         .background(Color.black)
         .onTapGesture {
-            completion?()
+            var data = data
+            data.isSelected.toggle()
+            isSelected = data.isSelected
+            
+            completion?(data)
         }
-        
     }
     
+    // MARK: Private
     private var overlay: some View {
         Circle()
             .frame(width: 27, height: 27)

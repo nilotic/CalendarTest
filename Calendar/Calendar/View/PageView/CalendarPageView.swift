@@ -26,11 +26,11 @@ struct CalendarPageView: View {
     // MARK: Public
     var body: some View {
         if !data.isEmpty {
-            CalendarPageViewController(pages: data.map { month in
+            CalendarPageViewController(pages: data.map { weeks in
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 1), count: 7), spacing: 1) {
-                    ForEach(month) { day in
-                        DayCell(data: day) {
-                            completion(day)
+                    ForEach(weeks) { day in
+                        DayCell(data: day) { updatedDay in
+                            completion(updatedDay)
                         }
                     }
                 }

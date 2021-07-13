@@ -11,7 +11,7 @@ struct CalendarView: View {
     
     // MARK: - Value
     // MARK: Private
-    @ObservedObject private var data = CalendarData()
+    @StateObject private var data = CalendarData()
    
     
     // MARK: - View
