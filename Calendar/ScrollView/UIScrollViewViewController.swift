@@ -54,6 +54,11 @@ extension UIScrollViewViewController: UIScrollViewDelegate {
     }
     
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        guard !decelerate else { return }
+        completion?(CGPoint(x: scrollView.contentOffset.x, y: scrollView.contentOffset.y + scrollView.contentInset.top), true)
+    }
+    
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         completion?(CGPoint(x: scrollView.contentOffset.x, y: scrollView.contentOffset.y + scrollView.contentInset.top), true)
     }
 }

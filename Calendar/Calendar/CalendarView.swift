@@ -77,6 +77,7 @@ struct CalendarView: View {
                 .tag(i)
             }
             .background(Color.white)
+            .offset(y: data.calenderOffsetY)
         }
         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
         .frame(height: data.calendarHeight)
@@ -86,7 +87,7 @@ struct CalendarView: View {
     private var transactionHistoryView: some View {
         GeometryReader { proxy in
             VStack {
-                TrackableScrollView(inset: UIEdgeInsets(top: data.expandedHeight - 70, left: 0, bottom: 0, right: 0), offset: $data.offset) {
+                TrackableScrollView(inset: UIEdgeInsets(top: data.expandedHeight - 70, left: 0, bottom: 0, right: 0), offset: $data.scrollOffset) {
                     LazyVStack {
                         Text("신한 110123130243")
                             .font(.system(size: 13))

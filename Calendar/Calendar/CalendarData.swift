@@ -14,7 +14,9 @@ final class CalendarData: ObservableObject {
     @Published var weeks = [[Day]]()
     @Published var title = ""
     @Published var calendarHeight: CGFloat = 60 * 6 + 1 * 5
-    @Published var offset: CGPoint = .zero
+    @Published var scrollOffset: CGPoint   = .zero
+    @Published var calenderOffsetY: CGFloat = 0
+    
     
     @Published var page = 0 {
         didSet { updateSection() }
@@ -142,25 +144,26 @@ final class CalendarData: ObservableObject {
     
     func updateCalendar(offset: CGPoint, isEnded: Bool) {
         let height = max(compactHeight, min(expandedHeight, expandedHeight - offset.y))
+        let lines = UInt(min(6, ceil(height / compactHeight)))
+        
+        let ratio = (height - compactHeight) / (expandedHeight - compactHeight)
+        calenderOffsetY = compactHeight / 2 * (1 - ratio)
         
         switch isEnded {
         case false:
             guard calendarHeight != height else { return }
             calendarHeight = height
             
-            let lines = UInt(min(6, ceil(height / 60)))
-            
             guard self.lines != lines else { return }
             self.lines = lines
             
         case true:
-            lines = UInt(min(6, ceil(height / 60))) < 3 ? 6 : 1
-            self.offset.y = lines == 1 ? 60 : -expandedHeight
+            self.lines = lines
+//            self.offset.y = lines == 1 ? 60 : expandedHeight
             
-            request()
+//            request()
         }
         
-        log(.info, lines)
     }
 
     // MARK: Private
