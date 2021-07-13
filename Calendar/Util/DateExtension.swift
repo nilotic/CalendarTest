@@ -94,6 +94,10 @@ extension Date {
         return Calendar.current.date(byAdding: DateComponents(day: days), to: self)
     }
     
+    func date(weeks: Int) -> Date? {
+        return Calendar.current.date(byAdding: DateComponents(day: weeks * 7), to: self)
+    }
+    
     func date(months: Int) -> Date? {
         return Calendar.current.date(byAdding: DateComponents(month: months), to: self)
     }

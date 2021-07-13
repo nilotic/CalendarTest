@@ -75,6 +75,7 @@ struct CalendarView: View {
                     }
                 }
                 .tag(i)
+                .drawingGroup()
             }
             .background(Color.white)
             .offset(y: data.calenderOffsetY)
