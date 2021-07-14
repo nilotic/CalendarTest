@@ -6,7 +6,8 @@ struct CalendarPageViewController<Page: View> {
     // MARK: - Value
     // MARK: Pubilc
     let pages: [Page]
-    let offset: CGFloat
+    let constants: [CGFloat]
+    let ratio: CGFloat
     @Binding var page: UInt
 
     // MARK: Private
@@ -33,8 +34,9 @@ extension CalendarPageViewController: UIViewControllerRepresentable {
             guard page < context.coordinator.viewControllers.count else { return }
             pageViewController.setViewControllers([context.coordinator.viewControllers[Int(page)]], direction: .forward, animated: false)
             
-            for constraint in context.coordinator.constraints {
-                constraint.constant = offset
+            for (i, constraint) in context.coordinator.constraints.enumerated() {
+                guard i < constants.count else { return }
+                constraint.constant = ratio * constants[i]
             }
         }
     }
@@ -83,7 +85,6 @@ extension CalendarPageViewController {
                 hostingController.willMove(toParent: viewController)
                 
                 viewControllers.append(viewController)
-                constraints.append(topConstraint)
             }
             
             self.viewController  = viewController

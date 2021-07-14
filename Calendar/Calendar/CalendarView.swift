@@ -65,8 +65,7 @@ struct CalendarView: View {
     }
     
     private var daysView: some View {
-        
-        CalendarPageView(data: data.weeks, page: $data.page, offset: data.calenderOffset) { day in
+        CalendarPageView(data: data.weeks, page: $data.page, constants: data.constants, ratio: data.ratio) { day in
             data.handle(data: day)
         }
         .frame(height: data.calendarHeight)
@@ -87,7 +86,7 @@ struct CalendarView: View {
                 .id(UUID())
             }
             .background(Color.white)
-            .offset(y: data.calenderOffset)
+            .offset(y: data.calendarOffset)
             .border(Color.white, width: 1)
         }
         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))

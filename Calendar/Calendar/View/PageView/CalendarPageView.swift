@@ -8,14 +8,16 @@ struct CalendarPageView: View {
     @Binding private var page: UInt
     
     private let data: [[Day]]
-    private let offset: CGFloat
+    private let ratio: CGFloat
+    private let constants: [CGFloat]
     private let completion: ((_ day: Day) -> Void)
     
     
     // MARK: - Initialier
-    init(data: [[Day]], page: Binding<UInt>, offset: CGFloat, completion: @escaping ((_ day: Day) -> Void)) {
+    init(data: [[Day]], page: Binding<UInt>, constants: [CGFloat], ratio: CGFloat, completion: @escaping ((_ day: Day) -> Void)) {
         self.data       = data
-        self.offset     = offset
+        self.constants  = constants
+        self.ratio      = ratio
         self.completion = completion
         
         _page = page
@@ -38,7 +40,7 @@ struct CalendarPageView: View {
                 .background(Color.white)
                 .border(Color.white, width: 1)
                 
-            }, offset: offset, page: $page)
+            }, constants: constants, ratio: ratio, page: $page)
         }
     }
 }
