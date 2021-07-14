@@ -98,7 +98,7 @@ struct CalendarView: View {
     private var transactionHistoryView: some View {
         GeometryReader { proxy in
             VStack {
-                TrackableScrollView(inset: UIEdgeInsets(top: data.expandedHeight - 70, left: 0, bottom: 0, right: 0), offset: $data.scrollOffset) {
+                TrackableScrollView(inset: UIEdgeInsets(top: data.expandedHeight - 70, left: 0, bottom: 0, right: 0), offset: data.scrollOffset) {
                     LazyVStack {
                         Text("신한 110123130243")
                             .font(.system(size: 13))

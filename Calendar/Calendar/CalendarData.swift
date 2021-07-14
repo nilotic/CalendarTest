@@ -15,7 +15,7 @@ final class CalendarData: ObservableObject {
     @Published var title = ""
     
     @Published var calendarHeight: CGFloat = 60 * 6 + 1 * 5
-    @Published var scrollOffset: CGPoint   = .zero
+    @Published var scrollOffset: CGFloat   = 0
     @Published var ratio: CGFloat          = 0
     @Published var constants               = [CGFloat]()
     @Published var calendarViewID          = 0
@@ -30,7 +30,7 @@ final class CalendarData: ObservableObject {
     let columns = Array(repeating: GridItem(.flexible(), spacing: 1), count: 7)
 
     let startDate = Calendar.current.date(from: DateComponents(timeZone: TimeZone(abbreviation: "UTC"), year: 2021, month: 1, day: 1))
-    let endDate   = Calendar.current.date(from: DateComponents(timeZone: TimeZone(abbreviation: "UTC"), year: 2021, month: 2, day: 31))
+    let endDate   = Calendar.current.date(from: DateComponents(timeZone: TimeZone(abbreviation: "UTC"), year: 2021, month: 12, day: 31))
 
     var transition: AnyTransition {
         let insertion = AnyTransition.move(edge: .trailing)
@@ -131,11 +131,12 @@ final class CalendarData: ObservableObject {
     }
     
     func handle(data: Day) {
+        var targetPage: UInt? = nil
+        
         for (section, month) in weeks.enumerated() {
             for (row, day) in month.enumerated() {
                 guard day == data else { continue }
                 weeks[section][row].isSelected.toggle()
-                
                 
                 // Update the selected first week
                 let day = weeks[section][row]
@@ -151,11 +152,9 @@ final class CalendarData: ObservableObject {
                 selectedFirstWeek = UInt((days.first?.1 ?? 0) / 7)
                 selectedDays[section] = days
                 
-                
-                // Move to the target page
-                let targetPage = selectedFirstWeek + UInt(section)
-                guard page != targetPage else { continue }
-                page = targetPage
+                // Target page
+                guard targetPage == nil else { continue }
+                targetPage = selectedFirstWeek + UInt(section)
             }
         }
         
@@ -163,17 +162,21 @@ final class CalendarData: ObservableObject {
         withAnimation {
             calendarViewID += 1
         }
-    }
         
+        // Move to the target page
+        guard let page = targetPage, self.page != page else { return }
+        self.page = page
+    }
+    
     func updateCalendar(offset: CGPoint, isEnded: Bool) {
         let height = max(compactHeight, min(expandedHeight, expandedHeight - offset.y))
         let lines = UInt(min(6, ceil(height / compactHeight)))
         
-        // Offset
-        ratio = 1 - ((height - compactHeight) / (expandedHeight - compactHeight))
-        
         switch isEnded {
         case false:
+            // Offset
+            ratio = 1 - ((height - compactHeight) / (expandedHeight - compactHeight))
+            
             guard calendarHeight != height else { return }
             calendarHeight = height
             
@@ -181,10 +184,13 @@ final class CalendarData: ObservableObject {
             self.lines = lines
             
         case true:
-            self.lines = lines
-//            self.offset.y = lines == 1 ? 60 : expandedHeight
             
-//            request()
+            guard !(self.lines == 1 || self.lines == 6) else { return }
+            log(.info, "\(lines) \(offset)")
+            self.lines = lines
+            
+//            ratio = lines == 1 ? 1 : 0
+            scrollOffset = lines == 1 ? (expandedHeight - compactHeight) : 0
         }
         
     }
