@@ -26,6 +26,10 @@ extension Day {
     var opacity: Double {
         date.month != validDate.month ? 0.48 : 1
     }
+    
+    var isValid: Bool {
+        date.month == validDate.month
+    }
 }
 
 extension Day: Identifiable {
@@ -45,7 +49,7 @@ extension Day: Hashable {
 extension Day: Equatable {
     
     static func ==(lhs: Day, rhs: Day) -> Bool {
-        lhs.id == rhs.id
+        lhs.date == rhs.date && lhs.validDate == rhs.validDate
     }
 }
 

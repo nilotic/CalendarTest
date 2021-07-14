@@ -16,8 +16,9 @@ final class CalendarData: ObservableObject {
     @Published var calendarHeight: CGFloat = 60 * 6 + 1 * 5
     @Published var scrollOffset: CGPoint   = .zero
     @Published var calenderOffset: CGFloat = 0
+    @Published var calendarViewID = 0
     
-    @Published var page = 0 {
+    @Published var page: UInt = 0 {
         didSet { updateSection() }
     }
     
@@ -41,6 +42,8 @@ final class CalendarData: ObservableObject {
     
     // MARK: Private
     private var lines: UInt = 1
+    private var selectedDays = [Int: [(Day, Int)]]()
+    private var selectedFirstWeek = 0
     
     private lazy var dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
@@ -70,64 +73,39 @@ final class CalendarData: ObservableObject {
                 
                 title = dateFormatter.string(from: startDate)
                 
-                switch lines {
-                case 1:
-                    let weekDay = firstDate.weekDay
-                    if 1 < weekDay, let date = firstDate.date(days:  -(13 + weekDay)) {
-                        firstDate = date
+                // First date
+                let weekDay = firstDate.weekDay
+                if 1 < weekDay, let previousMonth = firstDate.date(days: 1 - weekDay) {
+                    firstDate = previousMonth
+                }
+                
+                // Last date
+                guard let totalDays = lastDate.days(from: firstDate) else {
+                    log(.error, "Failed to get a totalDays.")
+                    return
+                }
+                
+                if totalDays < 41, let date = lastDate.date(days: 41 - totalDays) {
+                    lastDate = date
+                }
+                
+                var week = [Day(date: firstDate, validDate: date)]
+                while firstDate < lastDate {
+                    guard let next = firstDate.date(days: 1) else {
+                        log(.error, "Failed to get a date. firstDate: \(firstDate), lastDate:\(lastDate)")
+                        break
                     }
                     
-                    var week = [Day]()
-                    for weekIndex in 0..<6 {
-                        guard let firstDate = firstDate.date(weeks: weekIndex) else {
-                            log(.error, "Failed to get the first date.")
-                            return
-                        }
-                            
-                        week.removeAll()
-                        
-                        for days in 0..<42 {
-                            guard let date = firstDate.date(days: days) else {
-                                log(.error, "Failed to get a day.")
-                                return
-                            }
-                        
-                            week.append(Day(date: date, validDate: lastDate))
-                        }
-                    
-                        weeks.append(week)
-                    }
-                    
-                    
-                default:
-                    // First date
-                    let weekDay = firstDate.weekDay
-                    if 1 < weekDay, let previousMonth = firstDate.date(days: 1 - weekDay) {
-                        firstDate = previousMonth
-                    }
-                    
-                    
-                    // Last date
-                    guard let totalDays = lastDate.days(from: firstDate) else {
-                        log(.error, "Failed to get a totalDays.")
-                        return
-                    }
-                    
-                    if totalDays < 41, let date = lastDate.date(days: 41 - totalDays) {
-                        lastDate = date
-                    }
-                    
-                    var week = [Day(date: firstDate, validDate: date)]
-                    while firstDate < lastDate {
-                        guard let next = firstDate.date(days: 1) else {
-                            log(.error, "Failed to get a date. firstDate: \(firstDate), lastDate:\(lastDate)")
-                            break
-                        }
-                        
-                        firstDate = next
-                        week.append(Day(date: next, validDate: date))
-                    }
-                    
+                    firstDate = next
+                    week.append(Day(date: next, validDate: date))
+                }
+                
+                weeks.append(week)
+                
+                
+                // Duplicate a month
+                guard lines == 1 else { continue }
+                for _ in 0..<6 {
                     weeks.append(week)
                 }
             }
@@ -144,8 +122,27 @@ final class CalendarData: ObservableObject {
             for (row, day) in month.enumerated() {
                 guard day == data else { continue }
                 weeks[section][row].isSelected.toggle()
-                return
+                
+                // Update the selected first week
+                let day = weeks[section][row]
+                var days = selectedDays[section] ?? []
+                
+                switch day.isSelected {
+                case true:  days.append((day, row))
+                case false: days.removeAll(where: { $0.0 == day })
+                }
+                
+                days.sort { $0.1 < $1.1 }
+                
+                selectedFirstWeek = (days.first?.1 ?? 0) / 7
+                selectedDays[section] = days
             }
+        }
+        
+        
+        // For updating the calendarView, update the id
+        withAnimation {
+            calendarViewID += 1
         }
     }
     
@@ -153,8 +150,12 @@ final class CalendarData: ObservableObject {
         let height = max(compactHeight, min(expandedHeight, expandedHeight - offset.y))
         let lines = UInt(min(6, ceil(height / compactHeight)))
         
-        let ratio = (height - compactHeight) / (expandedHeight - compactHeight)
-        calenderOffset = compactHeight * (1 - ratio)
+        // Offset
+        let ratio = 1 - ((height - compactHeight) / (expandedHeight - compactHeight))
+        let spacing: CGFloat = 1
+        
+        calenderOffset = -(compactHeight + spacing) * ratio * CGFloat(selectedFirstWeek)
+        
         
         switch isEnded {
         case false:
@@ -175,7 +176,11 @@ final class CalendarData: ObservableObject {
 
     // MARK: Private
     private func updateSection() {
-        guard page < weeks.count, let date = weeks[page].first?.validDate else { return }
+        guard page < weeks.count, let date = weeks[Int(page)].first?.validDate else { return }
+        
+        let days = selectedDays[Int(page)] ?? []
+        selectedFirstWeek = (days.first?.1 ?? 0) / 7
+        
         withAnimation {
             title = dateFormatter.string(from: date)
         }

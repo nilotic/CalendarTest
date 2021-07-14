@@ -65,11 +65,35 @@ struct CalendarView: View {
     }
     
     private var daysView: some View {
+        
         CalendarPageView(data: data.weeks, page: $data.page, offset: data.calenderOffset) { day in
             data.handle(data: day)
         }
         .frame(height: data.calendarHeight)
         .border(Color.white, width: 1)
+        .id(data.calendarViewID)
+        
+        
+        /*
+        TabView(selection: $data.page) {
+            ForEach(data.weeks, id: \.self) { month in
+                LazyVGrid(columns: data.columns, spacing: 1) {
+                    ForEach(month) { day in
+                        DayCell(data: day) { updated in
+                            data.handle(data: updated)
+                        }
+                    }
+                }
+                .id(UUID())
+            }
+            .background(Color.white)
+            .offset(y: data.calenderOffset)
+            .border(Color.white, width: 1)
+        }
+        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+        .frame(height: data.calendarHeight)
+ */
+         
     }
     
     private var transactionHistoryView: some View {

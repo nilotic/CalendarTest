@@ -5,15 +5,15 @@ struct CalendarPageView: View {
     
     // MARK: - Value
     // MARK: Private
-    @Binding private var page: Int
+    @Binding private var page: UInt
+    
     private let data: [[Day]]
     private let offset: CGFloat
-    
     private let completion: ((_ day: Day) -> Void)
     
     
     // MARK: - Initialier
-    init(data: [[Day]], page: Binding<Int>, offset: CGFloat, completion: @escaping ((_ day: Day) -> Void)) {
+    init(data: [[Day]], page: Binding<UInt>, offset: CGFloat, completion: @escaping ((_ day: Day) -> Void)) {
         self.data       = data
         self.offset     = offset
         self.completion = completion
@@ -29,8 +29,8 @@ struct CalendarPageView: View {
             CalendarPageViewController(pages: data.map { weeks in
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 1), count: 7), spacing: 1) {
                     ForEach(weeks) { day in
-                        DayCell(data: day) { updatedDay in
-                            completion(updatedDay)
+                        DayCell(data: day) {
+                            completion(day)
                         }
                     }
                 }

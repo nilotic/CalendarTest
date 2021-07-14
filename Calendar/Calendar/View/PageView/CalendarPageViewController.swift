@@ -7,7 +7,7 @@ struct CalendarPageViewController<Page: View> {
     // MARK: Pubilc
     let pages: [Page]
     let offset: CGFloat
-    @Binding var page: Int
+    @Binding var page: UInt
 
     // MARK: Private
     private let pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
@@ -29,11 +29,13 @@ extension CalendarPageViewController: UIViewControllerRepresentable {
     }
 
     func updateUIViewController(_ pageViewController: UIPageViewController, context: Context) {
-        guard page < context.coordinator.viewControllers.count else { return }
-        pageViewController.setViewControllers([context.coordinator.viewControllers[page]], direction: .forward, animated: true)
-        
-        for constraint in context.coordinator.constraints {
-            constraint.constant = offset
+        DispatchQueue.main.async {
+            guard page < context.coordinator.viewControllers.count else { return }
+            pageViewController.setViewControllers([context.coordinator.viewControllers[Int(page)]], direction: .forward, animated: false)
+            
+            for constraint in context.coordinator.constraints {
+                constraint.constant = offset
+            }
         }
     }
 }
@@ -51,7 +53,6 @@ extension CalendarPageViewController {
         
         // MARK: Private
         private var viewController: CalendarPageViewController
-        private var currentIndex = 0
         
         
         // MARK: - Initializer
@@ -67,13 +68,17 @@ extension CalendarPageViewController {
                 viewController.view.addSubview(hostingController.view)
                 
                 hostingController.view.translatesAutoresizingMaskIntoConstraints = false
-                hostingController.view.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor).isActive     = true
                 hostingController.view.leadingAnchor.constraint(equalTo: viewController.view.leadingAnchor).isActive   = true
                 hostingController.view.trailingAnchor.constraint(equalTo: viewController.view.trailingAnchor).isActive = true
                 
                 let topConstraint = hostingController.view.topAnchor.constraint(equalTo: viewController.view.topAnchor)
+                topConstraint.priority = .required
                 topConstraint.isActive = true
                 constraints.append(topConstraint)
+                
+                let bottomConstraint = hostingController.view.bottomAnchor.constraint(equalTo: viewController.view.bottomAnchor)
+                bottomConstraint.priority = .defaultLow
+                bottomConstraint.isActive = true
                 
                 hostingController.willMove(toParent: viewController)
                 
@@ -100,11 +105,11 @@ extension CalendarPageViewController {
             guard let index = viewControllers.firstIndex(of: viewController), 1 < viewControllers.count else { return nil }
             return index + 1 == viewControllers.count ? nil : viewControllers[index + 1]
         }
-
+        
         // MARK: Delegate
         func pageViewController(_ pageViewController: UIPageViewController, didFinishAnimating finished: Bool, previousViewControllers: [UIViewController], transitionCompleted completed: Bool) {
             guard completed, let visibleViewController = pageViewController.viewControllers?.first, let index = viewControllers.firstIndex(of: visibleViewController) else { return }
-            viewController.page = index
+            viewController.page = UInt(index)
         }
     }
 }
