@@ -6,6 +6,7 @@ final class UIScrollViewViewController: UIViewController {
     // MARK: Public
     var hostingController: UIHostingController<AnyView> = UIHostingController(rootView: AnyView(EmptyView()))
     var inset: UIEdgeInsets = .zero
+    var range: ClosedRange<CGFloat> = 0...0
     var completion: ((_ offset: CGPoint, _ isEnded: Bool) -> Void)? = nil
     
     lazy var scrollView: UIScrollView = {
@@ -23,6 +24,18 @@ final class UIScrollViewViewController: UIViewController {
     
         return scrollView
     }()
+    
+    
+    // MARK: - Initializer
+    convenience init(view: AnyView, inset: UIEdgeInsets, range: ClosedRange<CGFloat>, completion: ((_ offset: CGPoint, _ isEnded: Bool) -> Void)?) {
+        self.init()
+        
+        hostingController = UIHostingController(rootView: view)
+        
+        self.inset      = inset
+        self.range      = range
+        self.completion = completion
+    }
     
     
     // MARK: - View Life Cycle
@@ -43,6 +56,19 @@ final class UIScrollViewViewController: UIViewController {
         constraint.priority = .defaultLow
         constraint.isActive = true
     }
+    
+    
+    // MARK: - Function
+    // MARK: Private
+    private func scroll() {
+        let height     = max(range.lowerBound, min(range.upperBound, range.upperBound - (scrollView.contentOffset.y + scrollView.contentInset.top)))
+        let lane       = UInt(min(6, ceil(height / range.lowerBound)))
+        let targetLane = lane  <= 3 ? 1 : 6
+        let y          = targetLane == 6 ? -scrollView.contentInset.top : (range.upperBound - range.lowerBound) - scrollView.contentInset.top
+        
+        guard !(lane == 1 || lane == 6) else { return }
+        scrollView.setContentOffset(CGPoint(x: 0, y: y), animated: true)
+    }
 }
 
 
@@ -56,9 +82,11 @@ extension UIScrollViewViewController: UIScrollViewDelegate {
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         guard !decelerate else { return }
         completion?(CGPoint(x: scrollView.contentOffset.x, y: scrollView.contentOffset.y + scrollView.contentInset.top), true)
+        scroll()
     }
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         completion?(CGPoint(x: scrollView.contentOffset.x, y: scrollView.contentOffset.y + scrollView.contentInset.top), true)
+        scroll()
     }
 }

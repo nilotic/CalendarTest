@@ -15,18 +15,16 @@ final class CalendarData: ObservableObject {
     @Published var title = ""
     
     @Published var calendarHeight: CGFloat = 60 * 6 + 1 * 5
-    @Published var scrollOffset: CGFloat   = 0
     @Published var ratio: CGFloat          = 0
     @Published var constants               = [CGFloat]()
     @Published var calendarViewID          = 0
+    @Published var isProgressing           = false
     
     @Published var page: UInt = 0 {
         didSet { updateSection() }
     }
     
-    let expandedHeight: CGFloat = 60 * 6 + 1 * 5
-    let compactHeight: CGFloat  = 60
-    
+    let range = CGFloat(60)...CGFloat(60 * 6 + 1 * 5)
     let columns = Array(repeating: GridItem(.flexible(), spacing: 1), count: 7)
 
     let startDate = Calendar.current.date(from: DateComponents(timeZone: TimeZone(abbreviation: "UTC"), year: 2021, month: 1, day: 1))
@@ -43,7 +41,7 @@ final class CalendarData: ObservableObject {
     }
     
     // MARK: Private
-    private var lines: UInt = 1
+    private var lane: UInt   = 1
     private var selectedDays = [Int: [(Day, Int)]]()
     private var selectedFirstWeek: UInt = 0
     
@@ -64,7 +62,7 @@ final class CalendarData: ObservableObject {
         var weeks     = [[Day]]()
         var constants = [CGFloat]()
         var title     = ""
-        let lines     = lines
+        let lane      = lane
         
         for year in startDate.year...endDate.year {
             for month in startDate.month...endDate.month {
@@ -115,10 +113,10 @@ final class CalendarData: ObservableObject {
                 constants.append(0)
                 
                 // Duplicate the month
-                guard lines == 1 else { continue }
+                guard lane == 1 else { continue }
                 for i in 1...Int(validLastIndex / 7) {
                     weeks.append(week)
-                    constants.append(-(compactHeight + 1) * CGFloat(i))
+                    constants.append(-(range.lowerBound + 1) * CGFloat(i))
                 }
             }
         }
@@ -131,6 +129,8 @@ final class CalendarData: ObservableObject {
     }
     
     func handle(data: Day) {
+        isProgressing = true
+        
         var targetPage: UInt? = nil
         
         for (section, month) in weeks.enumerated() {
@@ -158,10 +158,17 @@ final class CalendarData: ObservableObject {
             }
         }
         
-        // For updating the calendarView, update the id
-        withAnimation {
-            calendarViewID += 1
+      
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            // ProgressView
+            self.isProgressing = false
+            
+            // For updating the calendarView, update the id
+            withAnimation {
+                self.calendarViewID += 1
+            }
         }
+       
         
         // Move to the target page
         guard let page = targetPage, self.page != page else { return }
@@ -169,30 +176,25 @@ final class CalendarData: ObservableObject {
     }
     
     func updateCalendar(offset: CGPoint, isEnded: Bool) {
-        let height = max(compactHeight, min(expandedHeight, expandedHeight - offset.y))
-        let lines = UInt(min(6, ceil(height / compactHeight)))
+        let height = max(range.lowerBound, min(range.upperBound, range.upperBound - offset.y))
+        let lane   = UInt(min(6, ceil(height / range.lowerBound)))
         
         switch isEnded {
         case false:
             // Offset
-            ratio = 1 - ((height - compactHeight) / (expandedHeight - compactHeight))
+            ratio = 1 - ((height - range.lowerBound) / (range.upperBound - range.lowerBound))
             
             guard calendarHeight != height else { return }
             calendarHeight = height
             
-            guard self.lines != lines else { return }
-            self.lines = lines
+            guard self.lane != lane else { return }
+            self.lane = lane
             
         case true:
-            
-            guard !(self.lines == 1 || self.lines == 6) else { return }
-            log(.info, "\(lines) \(offset)")
-            self.lines = lines
-            
-//            ratio = lines == 1 ? 1 : 0
-            scrollOffset = lines == 1 ? (expandedHeight - compactHeight) : 0
+            guard !(self.lane == 1 || self.lane == 6) else { return }
+            self.lane = lane
+            ratio = lane == 1 ? 1 : 0
         }
-        
     }
 
     // MARK: Private
