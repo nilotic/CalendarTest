@@ -60,7 +60,7 @@ final class UIScrollViewViewController: UIViewController {
     
     // MARK: - Function
     // MARK: Private
-    private func scroll() {
+    private func updateMagneticEffect() {
         let height     = max(range.lowerBound, min(range.upperBound, range.upperBound - (scrollView.contentOffset.y + scrollView.contentInset.top)))
         let lane       = UInt(min(6, ceil(height / range.lowerBound)))
         let targetLane = lane  <= 3 ? 1 : 6
@@ -82,11 +82,11 @@ extension UIScrollViewViewController: UIScrollViewDelegate {
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         guard !decelerate else { return }
         completion?(CGPoint(x: scrollView.contentOffset.x, y: scrollView.contentOffset.y + scrollView.contentInset.top), true)
-        scroll()
+        updateMagneticEffect()
     }
     
     func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         completion?(CGPoint(x: scrollView.contentOffset.x, y: scrollView.contentOffset.y + scrollView.contentInset.top), true)
-        scroll()
+        updateMagneticEffect()
     }
 }

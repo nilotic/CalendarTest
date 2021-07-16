@@ -6,9 +6,14 @@ struct CalendarPageViewController<Page: View> {
     // MARK: - Value
     // MARK: Pubilc
     let pages: [Page]
+    
+    @Binding var page: UInt
+    @Binding var lane: UInt
+
+    let monthIndices: [UInt]
+    let selectedDays: [Int: [(Day, Int)]]
     let constants: [CGFloat]
     let ratio: CGFloat
-    @Binding var page: UInt
 
     // MARK: Private
     private let pageViewController = UIPageViewController(transitionStyle: .scroll, navigationOrientation: .horizontal)
@@ -83,7 +88,6 @@ extension CalendarPageViewController {
                 bottomConstraint.isActive = true
                 
                 hostingController.willMove(toParent: viewController)
-                
                 viewControllers.append(viewController)
             }
             
@@ -98,13 +102,57 @@ extension CalendarPageViewController {
         // MARK: - PageViewController
         // MARK: DataSource
         func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
-            guard let index = viewControllers.firstIndex(of: viewController), 1 < viewControllers.count else { return nil }
-            return index == 0 ? nil : viewControllers[index - 1]
+            switch self.viewController.lane {
+            case 6:
+                guard let index = viewControllers.firstIndex(of: viewController), 1 < viewControllers.count,
+                      let currentIndex = self.viewController.monthIndices.lastIndex(where: { $0 <= index }) else { return nil }
+                
+                let previousIndex = currentIndex - 1
+                
+                // Find the first index of the previous month indices
+                guard 0 <= previousIndex, previousIndex < self.viewController.monthIndices.count else { return nil }
+                var monthIndex = Int(self.viewController.monthIndices[previousIndex])
+                
+                // If the selected day is exist, update the month index
+                if let days = self.viewController.selectedDays[monthIndex], let date = days.first?.1 {
+                    let selectedFirstWeek = UInt(date / 7)
+                    monthIndex = max(monthIndex, Int(selectedFirstWeek))
+                }
+                
+                guard monthIndex < viewControllers.count else { return nil }
+                return viewControllers[monthIndex]
+            
+            default:
+                guard let index = viewControllers.firstIndex(of: viewController), 1 < viewControllers.count else { return nil }
+                return index == 0 ? nil : viewControllers[index - 1]
+            }
         }
 
         func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
-            guard let index = viewControllers.firstIndex(of: viewController), 1 < viewControllers.count else { return nil }
-            return index + 1 == viewControllers.count ? nil : viewControllers[index + 1]
+            switch self.viewController.lane {
+            case 6:
+                guard let index = viewControllers.firstIndex(of: viewController), 1 < viewControllers.count,
+                      let currentIndex = self.viewController.monthIndices.lastIndex(where: { $0 <= index }) else { return nil }
+                
+                let nextIndex = currentIndex + 1
+                
+                // Find the first index of the next month indices
+                guard nextIndex < viewControllers.count, nextIndex < self.viewController.monthIndices.count else { return nil }
+                var monthIndex = Int(self.viewController.monthIndices[nextIndex])
+                
+                // If the selected day is exist, update the month index
+                if let days = self.viewController.selectedDays[monthIndex], let date = days.first?.1 {
+                    let selectedFirstWeek = UInt(date / 7)
+                    monthIndex = max(monthIndex, Int(selectedFirstWeek))
+                }
+                
+                guard monthIndex < viewControllers.count else { return nil }
+                return viewControllers[monthIndex]
+            
+            default:
+                guard let index = viewControllers.firstIndex(of: viewController), 1 < viewControllers.count else { return nil }
+                return index + 1 == viewControllers.count ? nil : viewControllers[index + 1]
+            }
         }
         
         // MARK: Delegate

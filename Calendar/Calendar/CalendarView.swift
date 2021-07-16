@@ -77,13 +77,12 @@ struct CalendarView: View {
     }
     
     private var daysView: some View {
-        CalendarPageView(data: data.weeks, page: $data.page, constants: data.constants, ratio: data.ratio) { day in
+        CalendarPageView(data: data.weeks, page: $data.page, lane: $data.lane, monthIndices: data.monthIndices, selectedDays: data.selectedDays, constants: data.constants, ratio: data.ratio) { day in
             data.handle(data: day)
         }
         .frame(height: data.calendarHeight)
         .border(Color.white, width: 1)
         .id(data.calendarViewID)
-        
         
         /*
         TabView(selection: $data.page) {

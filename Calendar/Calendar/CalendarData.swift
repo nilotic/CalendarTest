@@ -15,16 +15,21 @@ final class CalendarData: ObservableObject {
     @Published var title = ""
     
     @Published var calendarHeight: CGFloat = 60 * 6 + 1 * 5
-    @Published var ratio: CGFloat          = 0
-    @Published var constants               = [CGFloat]()
-    @Published var calendarViewID          = 0
-    @Published var isProgressing           = false
+    
+    @Published var calendarViewID = 0
+    @Published var isProgressing  = false
     
     @Published var page: UInt = 0 {
         didSet { updateSection() }
     }
     
-    let range = CGFloat(60)...CGFloat(60 * 6 + 1 * 5)
+    var constants      = [CGFloat]()
+    var monthIndices   = [UInt]()
+    var selectedDays   = [Int: [(Day, Int)]]()
+    var ratio: CGFloat = 0
+    var lane: UInt     = 6
+    
+    let range   = CGFloat(60)...CGFloat(60 * 6 + 1 * 5)
     let columns = Array(repeating: GridItem(.flexible(), spacing: 1), count: 7)
 
     let startDate = Calendar.current.date(from: DateComponents(timeZone: TimeZone(abbreviation: "UTC"), year: 2021, month: 1, day: 1))
@@ -41,8 +46,6 @@ final class CalendarData: ObservableObject {
     }
     
     // MARK: Private
-    private var lane: UInt   = 1
-    private var selectedDays = [Int: [(Day, Int)]]()
     private var selectedFirstWeek: UInt = 0
     
     private lazy var dateFormatter: DateFormatter = {
@@ -54,15 +57,15 @@ final class CalendarData: ObservableObject {
     }()
     
     
-    
     // MARK: - Function
     // MARK: Public
     func request() {
         guard let startDate = startDate, let endDate = endDate else { return }
-        var weeks     = [[Day]]()
-        var constants = [CGFloat]()
-        var title     = ""
-        let lane      = lane
+        var weeks         = [[Day]]()
+        var monthIndices  = [UInt]()
+        var constants     = [CGFloat]()
+        var title         = ""
+        let selectedDates = Set(selectedDays.values.flatMap { $0 }.map { $0.0.date })
         
         for year in startDate.year...endDate.year {
             for month in startDate.month...endDate.month {
@@ -102,18 +105,18 @@ final class CalendarData: ObservableObject {
                     
                     firstDate = next
                     
-                    let day = Day(date: next, validDate: date)
+                    let day = Day(date: next, validDate: date, isSelected: selectedDates.contains(next))
                     week.append(day)
                     
                     guard day.isValid else { continue }
                     validLastIndex = max(0, week.count - 1)
                 }
                 
+                monthIndices.append(UInt(weeks.count))
                 weeks.append(week)
                 constants.append(0)
                 
                 // Duplicate the month
-                guard lane == 1 else { continue }
                 for i in 1...Int(validLastIndex / 7) {
                     weeks.append(week)
                     constants.append(-(range.lowerBound + 1) * CGFloat(i))
@@ -122,17 +125,22 @@ final class CalendarData: ObservableObject {
         }
         
         DispatchQueue.main.async {
-            self.weeks     = weeks
-            self.constants = constants
-            self.title     = title
+            self.weeks        = weeks
+            self.monthIndices = monthIndices
+            self.constants    = constants
+            self.title        = title
+            
+            withAnimation {
+                self.calendarViewID += 1
+            }
         }
     }
     
     func handle(data: Day) {
         isProgressing = true
-        
+    
+        // Updated days
         var targetPage: UInt? = nil
-        
         for (section, month) in weeks.enumerated() {
             for (row, day) in month.enumerated() {
                 guard day == data else { continue }
@@ -157,27 +165,24 @@ final class CalendarData: ObservableObject {
                 targetPage = selectedFirstWeek + UInt(section)
             }
         }
+       
+        // For updating the calendarView, update the id
+        withAnimation(.easeIn(duration: 0.18)) {
+            self.calendarViewID += 1
+        }
         
-      
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            // ProgressView
+        // ProgressView
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) {
             self.isProgressing = false
-            
-            // For updating the calendarView, update the id
-            withAnimation {
-                self.calendarViewID += 1
-            }
         }
        
-        
-        // Move to the target page
+        // Move to the target page, if the calendarView is folded
         guard let page = targetPage, self.page != page else { return }
         self.page = page
     }
     
     func updateCalendar(offset: CGPoint, isEnded: Bool) {
         let height = max(range.lowerBound, min(range.upperBound, range.upperBound - offset.y))
-        let lane   = UInt(min(6, ceil(height / range.lowerBound)))
         
         switch isEnded {
         case false:
@@ -187,11 +192,10 @@ final class CalendarData: ObservableObject {
             guard calendarHeight != height else { return }
             calendarHeight = height
             
-            guard self.lane != lane else { return }
-            self.lane = lane
-            
         case true:
-            guard !(self.lane == 1 || self.lane == 6) else { return }
+            let lane = UInt(min(6, ceil(height / range.lowerBound)))
+            
+            guard self.lane != lane else { return }
             self.lane = lane
             ratio = lane == 1 ? 1 : 0
         }
